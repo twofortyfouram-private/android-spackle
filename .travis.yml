@@ -4,9 +4,9 @@ sudo: false
 
 android:
   components:
-    - platform-tools-23.0.0
-    - tools-24.3.4
-    - build-tools-23.0.0
+    - platform-tools-23.0.1
+    - tools-24.4.1
+    - build-tools-23.0.1
 
     - docs-23
     - android-8
@@ -15,19 +15,22 @@ android:
     - android-22
     - android-23
     - extra-android-m2repository
+    - sys-img-armeabi-v7a-android-22
   licenses:
     - 'android-sdk-license-.*'
 
 env:
   matrix:
-    - ANDROID_SDKS=android-8             ANDROID_TARGET=android-8   ANDROID_ABI=armeabi
-    - ANDROID_SDKS=android-19,sysimg-19  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-8
+    - ANDROID_TARGET=android-10
+    #- ANDROID_TARGET=android-19
+    #- ANDROID_TARGET=android-22
 
 before_script:
-    - echo no | android create avd --force -n test --target $ANDROID_TARGET --abi $ANDROID_ABI
-    - emulator -avd test -no-skin -no-audio -no-window &
+    - echo no | android create avd --force -n test --target $ANDROID_TARGET
+    - emulator -avd test -no-skin -no-audio -no-window -gpu off -no-boot-anim &
     - android-wait-for-emulator
     - adb shell input keyevent 82 &
 
 script:
-  - TERM=dumb ./gradlew -PIS_PREDEXING_ENABLED=false -PIS_COVERAGE_ENABLED=true assemble connectedCheck check findbugs releaseJavadoc
+  - TERM=dumb ./gradlew -PIS_PREDEXING_ENABLED=false assemble connectedCheck check findbugs releaseJavadoc
