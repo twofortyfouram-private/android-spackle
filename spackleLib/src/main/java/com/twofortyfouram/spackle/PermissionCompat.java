@@ -15,11 +15,14 @@
 
 package com.twofortyfouram.spackle;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Size;
 
@@ -33,6 +36,16 @@ import static com.twofortyfouram.assertion.Assertions.assertNotNull;
 @ThreadSafe
 public final class PermissionCompat {
 
+    /*
+     * Since test contexts are usually intended to be available in unobfuscated
+     * debug builds, this relies on the class name.  If the debug release is obfuscated, this
+     * will fail.  Relying on a direct reference to the class itself is not possible, because
+     * then spackleLib would need an explicit dependency on the test library.
+     */
+    @NonNull
+    private static final String FEATURE_CONTEXT_WRAPPER_CLASS_NAME
+            = "com.twofortyfouram.test.context.FeatureContextWrapper"; //$NON-NLS-1$
+
     /**
      * Dynamically checks app permissions at runtime, with forward and backward
      * compatibility for pre-Marshmallow and post-Mashmallow permission behavior.
@@ -40,6 +53,10 @@ public final class PermissionCompat {
      * The behavior is different from {@code android.support.v4.content.PermissionChecker}.  This
      * method lets SDK and app developers handle scenarios when permissions may intentionally
      * be omitted from the manifest.
+     *
+     * Note that on Marshmallow, this class also correctly handles checking for {@link
+     * android.Manifest.permission#WRITE_SETTINGS} and
+     * {@link android.Manifest.permission#REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}.
      *
      * @param context        Application context.
      * @param permissionName Name of the permission to check.
@@ -100,23 +117,80 @@ public final class PermissionCompat {
          * context.
          */
 
-        if (PackageManager.PERMISSION_DENIED == context.checkSelfPermission(permissionName)) {
-            final PackageInfo myPackageInfo = AppBuildInfo.getMyPackageInfo(context,
-                    PackageManager.GET_PERMISSIONS);
-
-            final String[] requestedPermissions = myPackageInfo.requestedPermissions;
-            final int length = requestedPermissions.length;
-            for (int i = 0; i < length; i++) {
-                if (permissionName.equals(requestedPermissions[i])) {
-                    return PermissionStatus.NOT_GRANTED_BY_USER;
-                }
+        if (!isPermissionGrantedByUser(context, permissionName)) {
+            if (isPermissionGrantedByManifest(context, permissionName)) {
+                return PermissionStatus.NOT_GRANTED_BY_USER;
+            } else {
+                return PermissionStatus.NOT_GRANTED_BY_MANIFEST;
             }
-
-            return PermissionStatus.NOT_GRANTED_BY_MANIFEST;
         }
 
-
         return PermissionStatus.GRANTED;
+    }
+
+    /**
+     * @param context        Application context.
+     * @param permissionName Name of the permission to check.
+     * @return True if the permission is granted by the user.  If false, the permission may not be
+     * granted by the user or may not be granted by the manifest.  Further disambiguation is
+     * required by the caller.
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    private static boolean isPermissionGrantedByUser(@NonNull final Context context,
+            @NonNull @Size(min = 1) final String permissionName) {
+        assertNotNull(context, "context"); //$NON-NLS-1$
+        assertNotEmpty(permissionName, "permissionName"); //$NON-NLS-1$
+
+        /*
+         * WRITE_SETTINGS and REQUEST_IGNORE_BATTERY_OPTIMIZATIONS behave differently from other
+         * permissions and have to be checked in a different way.  The lack of consistency in the
+         * Android SDK is frustrating, so this implementation smooths that over.
+         *
+         * To make unit testing easier, this class is aware of the FeatureContextWrapper
+         * implementation.  If a test context, then we fall back to a different set of behaviors.
+         */
+        if (Manifest.permission.WRITE_SETTINGS.equals(permissionName)
+                && !FEATURE_CONTEXT_WRAPPER_CLASS_NAME.equals(context.getClass().getName())) {
+            if (Settings.System.canWrite(context)) {
+                return true;
+            }
+        } else if (Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                .equals(permissionName) && !FEATURE_CONTEXT_WRAPPER_CLASS_NAME
+                .equals(context.getClass().getName())) {
+            if (context.getSystemService(PowerManager.class)
+                    .isIgnoringBatteryOptimizations(context.getPackageName())) {
+                return true;
+            }
+        } else if (PackageManager.PERMISSION_GRANTED == context
+                .checkSelfPermission(permissionName)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param context        Application context.
+     * @param permissionName Name of the permission to check.
+     * @return True if the permission is explicitly declared in the manifest.
+     */
+    private static boolean isPermissionGrantedByManifest(@NonNull final Context context,
+            @NonNull @Size(min = 1) final String permissionName) {
+        assertNotNull(context, "context"); //$NON-NLS-1$
+        assertNotEmpty(permissionName, "permissionName"); //$NON-NLS-1$
+
+        final PackageInfo myPackageInfo = AppBuildInfo.getMyPackageInfo(context,
+                PackageManager.GET_PERMISSIONS);
+
+        final String[] requestedPermissions = myPackageInfo.requestedPermissions;
+        final int length = requestedPermissions.length;
+        for (int i = 0; i < length; i++) {
+            if (permissionName.equals(requestedPermissions[i])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /*

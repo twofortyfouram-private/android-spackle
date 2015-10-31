@@ -74,6 +74,72 @@ public final class PermissionCompatTest extends AndroidTestCase {
                         Manifest.permission.CALL_PHONE));
     }
 
+    /*
+     * Handle the write settings special case with a FeatureContextWrapper.
+     */
+    @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
+    public void testGetPermissionStatus_write_settings_granted_with_feature_context_wrapper() {
+        final String[] permissionArray = new String[]{
+                Manifest.permission.WRITE_SETTINGS
+        };
+
+        final Context testContext = new FeatureContextWrapper(getContext(), permissionArray,
+                permissionArray, null);
+
+        assertEquals(PermissionCompat.PermissionStatus.GRANTED,
+                PermissionCompat.getPermissionStatus(testContext,
+                        Manifest.permission.WRITE_SETTINGS));
+    }
+
+    /*
+     * Handle the ignore battery optimizations special case with a FeatureContextWrapper.
+     */
+    @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
+    public void testGetPermissionStatus_request_ignore_battery_optimizations_granted_with_feature_context_wrapper() {
+        final String[] permissionArray = new String[]{
+                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+        };
+
+        final Context testContext = new FeatureContextWrapper(getContext(), permissionArray,
+                permissionArray, null);
+
+        assertEquals(PermissionCompat.PermissionStatus.GRANTED,
+                PermissionCompat.getPermissionStatus(testContext,
+                        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS));
+    }
+
+    /*
+     * Handle the write settings special case.
+     */
+    @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
+    public void testGetPermissionStatus_write_settings_not_granted() {
+        /*
+         * Note: this test is dependent on the Manifest NOT having the permission.
+         */
+
+        assertEquals(PermissionCompat.PermissionStatus.NOT_GRANTED_BY_MANIFEST,
+                PermissionCompat.getPermissionStatus(getContext(),
+                        Manifest.permission.WRITE_SETTINGS));
+    }
+
+    /*
+     * Handle the ignore battery optimizations special case.
+     */
+    @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
+    public void testGetPermissionStatus_request_ignore_battery_optimizations_not_granted() {
+        /*
+         * Note: this test is dependent on the Manifest NOT having the permission.
+         */
+
+        assertEquals(PermissionCompat.PermissionStatus.NOT_GRANTED_BY_MANIFEST,
+                PermissionCompat.getPermissionStatus(getContext(),
+                        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS));
+    }
+
     @SmallTest
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void testGetPermissionStatus_not_granted_by_manifest() {
