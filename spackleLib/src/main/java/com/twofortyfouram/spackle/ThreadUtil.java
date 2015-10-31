@@ -25,6 +25,9 @@ import com.twofortyfouram.annotation.VisibleForTesting;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.ThreadSafe;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import static com.twofortyfouram.assertion.Assertions.assertNotEmpty;
 import static com.twofortyfouram.assertion.Assertions.assertNotNull;
 
@@ -166,6 +169,7 @@ public final class ThreadUtil {
             android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE,
             android.os.Process.THREAD_PRIORITY_URGENT_AUDIO,
             android.os.Process.THREAD_PRIORITY_URGENT_DISPLAY})
+    @Retention(RetentionPolicy.SOURCE)
     /*package*/ @interface ThreadPriorityTypeDef {
 
     }

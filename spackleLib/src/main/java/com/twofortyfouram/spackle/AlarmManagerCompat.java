@@ -216,7 +216,7 @@ public final class AlarmManagerCompat {
     }
 
     @NonNull
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.M)
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     private AlarmToken setExactMarshmallow(@AlarmType final int type,
             final long triggerAtMillis, @NonNull final PendingIntent pendingIntent,
