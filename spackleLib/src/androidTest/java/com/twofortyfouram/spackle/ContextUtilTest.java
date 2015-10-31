@@ -18,14 +18,13 @@ package com.twofortyfouram.spackle;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.test.AndroidTestCase;
+import android.test.IsolatedContext;
+import android.test.RenamingDelegatingContext;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.twofortyfouram.spackle.ContextUtil;
 import com.twofortyfouram.test.assertion.MoarAsserts;
 
-/**
- * Tests {@link ContextUtil}.
- */
+
 public final class ContextUtilTest extends AndroidTestCase {
 
     @SmallTest
@@ -50,6 +49,20 @@ public final class ContextUtilTest extends AndroidTestCase {
         } catch (final AssertionError e) {
             // expected exception
         }
+    }
+
+    @SmallTest
+    public static void testCleanContext_isolated_context() {
+        final Context isolatedContext = new IsolatedContext(null, null);
+
+        assertSame(isolatedContext, ContextUtil.cleanContext(isolatedContext));
+    }
+
+    @SmallTest
+    public static void testCleanContext_renaming_delegating_context() {
+        final Context renamingDelegatingContext = new RenamingDelegatingContext(null, null);
+
+        assertSame(renamingDelegatingContext, ContextUtil.cleanContext(renamingDelegatingContext));
     }
 
     private static final class CleanableContext extends ContextWrapper {

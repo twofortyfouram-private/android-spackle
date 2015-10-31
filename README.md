@@ -25,9 +25,10 @@ The build.gradle repositories section would look something like the following:
 And the dependencies section would look something like this:
     
     dependencies {
-        compile group:'com.twofortyfouram', name:'android-spackle', version:'[2.0.1,3.0['
+        compile group:'com.twofortyfouram', name:'android-spackle', version:'[2.0.2,3.0['
     }
 
 # History
 * 2.0.0: Initial release
 * 2.0.1: PermissionCompat handles WRITE_SETTINGS and REQUEST_IGNORE_BATTERY_OPTIMIZATIONS on Android Marshmallow
+* 2.0.2: ContextUtil avoids breaking out of test context

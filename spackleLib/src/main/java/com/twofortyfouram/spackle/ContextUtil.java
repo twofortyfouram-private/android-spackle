@@ -33,6 +33,31 @@ import static com.twofortyfouram.assertion.Assertions.assertNotNull;
 @ThreadSafe
 public final class ContextUtil {
 
+    /*
+     * Note: this implementation relies on an explicit whitelist of test context classes, as
+     * opposed to a whitelist based on a partial package name (e.g. excluding all android.test.*).
+     * This implementation reduces the likelihood of a malicious actor attempting to introduce
+     * context memory leaks.
+     *
+     * A leak could still occur if a malicious actor passes in a context that overrides
+      * getApplicationContext().
+     */
+
+    /**
+     * Class name of isolated context.
+     */
+    @NonNull
+    private static final String ISOLATED_CONTEXT_CLASS_NAME = "android.test.IsolatedContext";
+    //$NON-NLS-1$
+
+    /**
+     * Class name of isolated context.
+     */
+    @NonNull
+    private static final String RENAMING_DELEGATING_CONTEXT_CLASS_NAME
+            = "android.test.RenamingDelegatingContext";
+    //$NON-NLS-1$
+
     /**
      * Gets the Application Context of {@code context} to prevent memory leaks
      * from {@code Activity}, {@code Service}, or similar contexts.
@@ -40,6 +65,9 @@ public final class ContextUtil {
      * This is typically used to check a Context parameter when entering a
      * method that expects an Application context, because this will log whether
      * the Context is correctly cleaned or not.
+     *
+     * This method is useful, because it tries to avoid breaking out of context during automated
+     * tests.
      *
      * @param context {@code Context} to clean. If this is a test context that
      *                doesn't support {@link Context#getApplicationContext()}, then
@@ -61,26 +89,34 @@ public final class ContextUtil {
             Lumberjack.w("context was an instance of BackupAgent%s", new Exception()); //$NON-NLS-1$
         }
 
-        try {
-            final Context returnContext = context.getApplicationContext();
+        final String className = context.getClass().getName();
+
+        if (className.equals(ISOLATED_CONTEXT_CLASS_NAME) || className
+                .equals(RENAMING_DELEGATING_CONTEXT_CLASS_NAME)) {
+            return context;
+        } else {
+            try {
+                final Context returnContext = context.getApplicationContext();
 
             /*
              * Check for null is required because during unit tests the
              * Application context might not have been initialized yet.
              */
-            if (null == returnContext) {
-                return context;
-            }
-            return returnContext;
-        } catch (final UnsupportedOperationException e) {
+                if (null == returnContext) {
+                    return context;
+                }
+                return returnContext;
+            } catch (final UnsupportedOperationException e) {
             /*
              * This is required for when the app's JUnit test suite is run.
              * Calling getApplicationContext() on a test context will fail.
              */
-            Lumberjack
-                    .w("Couldn't clean context; probably running in test mode%s", e); //$NON-NLS-1$
+                Lumberjack
+                        .w("Couldn't clean context; probably running in test mode%s",
+                                e); //$NON-NLS-1$
 
-            return context;
+                return context;
+            }
         }
     }
 
