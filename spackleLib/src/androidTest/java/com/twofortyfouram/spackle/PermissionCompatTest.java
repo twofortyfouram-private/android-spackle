@@ -16,6 +16,7 @@
 package com.twofortyfouram.spackle;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.test.filters.SdkSuppress;
@@ -96,6 +97,7 @@ public final class PermissionCompatTest extends AndroidTestCase {
      * Handle the ignore battery optimizations special case with a FeatureContextWrapper.
      */
     @SmallTest
+    @TargetApi(Build.VERSION_CODES.M)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void testGetPermissionStatus_request_ignore_battery_optimizations_granted_with_feature_context_wrapper() {
         final String[] permissionArray = new String[]{
@@ -129,6 +131,7 @@ public final class PermissionCompatTest extends AndroidTestCase {
      * Handle the ignore battery optimizations special case.
      */
     @SmallTest
+    @TargetApi(Build.VERSION_CODES.M)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void testGetPermissionStatus_request_ignore_battery_optimizations_not_granted() {
         /*
@@ -141,7 +144,7 @@ public final class PermissionCompatTest extends AndroidTestCase {
     }
 
     @SmallTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
+    @TargetApi(Build.VERSION_CODES.M)
     public void testGetPermissionStatus_not_granted_by_manifest() {
 
         /*

@@ -32,3 +32,4 @@ And the dependencies section would look something like this:
 * 2.0.0: Initial release
 * 2.0.1: PermissionCompat handles WRITE_SETTINGS and REQUEST_IGNORE_BATTERY_OPTIMIZATIONS on Android Marshmallow
 * 2.0.2: ContextUtil avoids breaking out of test context
+* 2.0.3: PermissionCompat implementation handles null arrays from PackageManager.  This is unlikely to impact usage, except during automated tests.

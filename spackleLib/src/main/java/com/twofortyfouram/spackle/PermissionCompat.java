@@ -183,10 +183,12 @@ public final class PermissionCompat {
                 PackageManager.GET_PERMISSIONS);
 
         final String[] requestedPermissions = myPackageInfo.requestedPermissions;
-        final int length = requestedPermissions.length;
-        for (int i = 0; i < length; i++) {
-            if (permissionName.equals(requestedPermissions[i])) {
-                return true;
+        if (null != requestedPermissions) {
+            final int length = requestedPermissions.length;
+            for (int i = 0; i < length; i++) {
+                if (permissionName.equals(requestedPermissions[i])) {
+                    return true;
+                }
             }
         }
 
