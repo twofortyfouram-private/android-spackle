@@ -9,7 +9,7 @@ dependencies {
     compile group:'com.twofortyfouram', name:'android-assertion', version:"${TWOFORTYFOURAM_ASSERTION_VERSION_MATCHER}"
 
     androidTestCompile group:'com.twofortyfouram', name:'android-test', version:"${TWOFORTYFOURAM_TEST_VERSION_MATCHER}"
-    androidTestCompile group:'com.android.support.test', name:'testing-support-lib', version:"${ANDROID_SUPPORT_TEST_VERSION_MATCHER}"
+    androidTestCompile group:'com.android.support.test.espresso', name:'espresso-core', version:"${ESPRESSO_CORE_VERSION_MATCHER}"
 }
 
 android {
@@ -39,9 +39,12 @@ android.libraryVariants.all { variant ->
         description "Generates Javadoc for $variant.name."
         def androidHome = System.getenv('ANDROID_HOME')
         source = variant.javaCompile.source
-        classpath = files(variant.javaCompile.classpath.files) + files("${androidHome}/platforms/${android.compileSdkVersion}/android.jar")
-        options.linksOffline('http://developer.android.com/reference/', "${androidHome}/docs/reference")
-        options.links('http://jcip.net.s3-website-us-east-1.amazonaws.com/annotations/doc/', 'http://twofortyfouram.github.io/android-annotation/')
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += variant.javaCompile.classpath
+        classpath += variant.javaCompile.outputs.files
+        options.linksOffline('https://developer.android.com/reference/', "${androidHome}/docs/reference")
+        options.links('http://jcip.net.s3-website-us-east-1.amazonaws.com/annotations/doc/', 'https://twofortyfouram.github.io/android-annotation/')
+        exclude '**/R.java'
         exclude 'com/twofortyfouram/spackle/internal/**'
     }
 }
@@ -98,7 +101,7 @@ android.libraryVariants.all { variant ->
     project.artifacts.add('archives', tasks["${variant.name}SourceJar"]);
 }
 
-task findbugs(type: FindBugs) {
+task findbugs(type: FindBugs, dependsOn: ':spackleLib:compileReleaseSources') {
     ignoreFailures = true
     classes = fileTree('build/intermediates/classes/release/')
     source = fileTree('src/main/java/')

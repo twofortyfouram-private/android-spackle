@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/twofortyfouram/android-spackle.png?branch=master)](https://travis-ci.org/twofortyfouram/android-spackle)
+[![CircleCI](https://circleci.com/gh/twofortyfouram/android-spackle.svg?style=svg)](https://circleci.com/gh/twofortyfouram/android-spackle)
 
 # Overview
-Spackle smooths things over and fills in the cracks.
+Spackle smooths things over and fills in the cracks.  This is a hodgepodge of utility classes that we reused several times and just bundled them together.
 
 
 # API Reference
