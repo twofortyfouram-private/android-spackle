@@ -14,24 +14,24 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.twofortyfouram.spackle;
+package com.twofortyfouram.spackle.test.fixture;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+import android.support.annotation.RestrictTo;
+import android.support.annotation.VisibleForTesting;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import net.jcip.annotations.ThreadSafe;
 
-import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
-import static org.hamcrest.MatcherAssert.assertThat;
+@ThreadSafe
+@RestrictTo(RestrictTo.Scope.TESTS)
+@VisibleForTesting(otherwise = VisibleForTesting.NONE)
+public final class MockClockFixture {
 
-@RunWith(AndroidJUnit4.class)
-public final class AndroidSdkVersionTest {
+    public static final long MOCK_CLOCK_REAL_TIME_MILLIS = 123456789;
 
-    @Test
-    @SmallTest
-    public void nonInstantiable() {
-        assertThat(AndroidSdkVersion.class, notInstantiable());
+    public static final long MOCK_CLOCK_WALL_TIME_MILLIS = 987654321;
+
+    private MockClockFixture() {
+        throw new UnsupportedOperationException("This class is non-instantiable"); //$NON-NLS-1$
     }
 
 }

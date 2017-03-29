@@ -1,21 +1,23 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -60,7 +62,7 @@ public final class AlarmManagerCompat {
      * delays and to mitigate against TOCTOU errors that might occur when deciding which scheduling
      * type to use.
      */
-    private static final long LOLLIPOP_ALARM_CUTOFF_MILLIS = 5 * DateUtils.SECOND_IN_MILLIS;
+    private static final long LOLLIPOP_ALARM_CUTOFF_MILLIS = 6 * DateUtils.SECOND_IN_MILLIS;
 
     /**
      * Lock to synchronize initialization of {@link #sInstance}.
@@ -70,6 +72,7 @@ public final class AlarmManagerCompat {
 
     @Nullable
     @GuardedBy("INITIALIZATION_INTRINSIC_LOCK")
+    @SuppressLint("StaticFieldLeak")
     private static volatile AlarmManagerCompat sInstance;
 
     @NonNull
@@ -222,13 +225,8 @@ public final class AlarmManagerCompat {
             final long triggerAtMillis, @NonNull final PendingIntent pendingIntent,
             final long currentWalltimeMillis, final long currentElapsedRealtimeMillis) {
 
-        // There is a small risk of a TOCTOU error, if the user changes the battery optimization
-        // setting after the alarm is set.
-        if (mPowerManager.isIgnoringBatteryOptimizations(mContext.getPackageName())) {
-            return setExactLollipop(type, triggerAtMillis, pendingIntent, currentWalltimeMillis,
-                    currentElapsedRealtimeMillis);
-        }
-
+        // TODO: it would be nice to set using the old API so that while the device was non-idle
+        // the alarm would be more precise.
         mAlarmManager.setAndAllowWhileIdle(type, triggerAtMillis, pendingIntent);
 
         return new AlarmToken(pendingIntent);

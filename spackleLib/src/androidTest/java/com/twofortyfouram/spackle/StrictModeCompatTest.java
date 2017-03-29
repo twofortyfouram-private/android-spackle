@@ -1,16 +1,17 @@
 /*
- * android-bootstrap-core-lib https://github.com/twofortyfouram/android-bootstrap-core
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
@@ -20,26 +21,27 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
-import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
-import com.twofortyfouram.spackle.AndroidSdkVersion;
-import com.twofortyfouram.spackle.StrictModeCompat;
-import com.twofortyfouram.test.assertion.MoarAsserts;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-/**
- * Tests {@link StrictModeCompat}.
- */
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 @SuppressLint("NewApi")
-public final class StrictModeCompatTest extends AndroidTestCase {
+@RunWith(AndroidJUnit4.class)
+public final class StrictModeCompatTest {
 
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(StrictModeCompat.class);
+    public void nonInstantiable() {
+        assertThat(StrictModeCompat.class, notInstantiable());
     }
 
     @SmallTest
-    public static void testSetStrictMode_false() {
+    @Test
+    public void setStrictMode_false() {
         ThreadPolicy threadPolicy = null;
         VmPolicy vmPolicy = null;
         if (AndroidSdkVersion.isAtLeastSdk(Build.VERSION_CODES.GINGERBREAD)) {
@@ -58,7 +60,8 @@ public final class StrictModeCompatTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testSetStrictMode_true() {
+    @Test
+    public void setStrictMode_true() {
         ThreadPolicy threadPolicy = null;
         VmPolicy vmPolicy = null;
         if (AndroidSdkVersion.isAtLeastSdk(Build.VERSION_CODES.GINGERBREAD)) {
@@ -77,7 +80,8 @@ public final class StrictModeCompatTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testNoteSlowCall() {
+    @Test
+    public void noteSlowCall() {
         /*
          * The result of this method cannot be easily tested, however calling it at least ensures
          * that no exceptions are thrown.

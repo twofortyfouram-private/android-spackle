@@ -1,16 +1,17 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package log;
@@ -18,28 +19,35 @@ package log;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.twofortyfouram.log.Lumberjack;
-import com.twofortyfouram.test.assertion.MoarAsserts;
 
-/**
- * Tests {@link Lumberjack}.
- */
-public final class LumberjackTest extends AndroidTestCase {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+
+@RunWith(AndroidJUnit4.class)
+public final class LumberjackTest {
 
     /*
-     * Note: This test is not intended to check the actual logcat output.
+     * Note: This test is not intended to check the actual logcat output.  By at least executing
+     * the code paths, we're testing that no exceptions are thrown.
      */
 
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(Lumberjack.class);
+    @Test
+    public void nonInstantiable() {
+        assertThat(Lumberjack.class, notInstantiable());
     }
 
     @SmallTest
-    public static void testLog_without_format() {
+    @Test
+    public void log_without_format() {
         final String message = "Test message"; //$NON-NLS-1$
 
         Lumberjack.always(message);
@@ -51,7 +59,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_array_object() {
+    @Test
+    public void log_with_format_array_object() {
         final String message = "Test message %s"; //$NON-NLS-1$
         final Object[] array = new Object[]{
                 new Location("test")}; //$NON-NLS-1$
@@ -65,7 +74,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_array_primitive() {
+    @Test
+    public void log_with_format_array_primitive() {
         final String message = "Test message %s"; //$NON-NLS-1$
         final int[] array = new int[]{
                 1, 2, 3
@@ -80,7 +90,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_bundle() {
+    @Test
+    public void log_with_format_bundle() {
         final String message = "Test message %s"; //$NON-NLS-1$
         final Bundle bundle = new Bundle();
 
@@ -93,7 +104,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_int() {
+    @Test
+    public void log_with_format_int() {
         final String message = "Test message %d"; //$NON-NLS-1$
 
         Lumberjack.always(message, 1);
@@ -105,7 +117,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_intent() {
+    @Test
+    public void log_with_format_intent() {
         final String message = "Test message"; //$NON-NLS-1$
         final Intent intent = new Intent();
 
@@ -118,7 +131,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_null() {
+    @Test
+    public void log_with_format_null() {
         final String message = "Test message %s"; //$NON-NLS-1$
 
         Lumberjack.always(message, (Object[]) null);
@@ -130,7 +144,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_object() {
+    @Test
+    public void log_with_format_object() {
         final String message = "Test message %s"; //$NON-NLS-1$
 
         Lumberjack.always(message, new Object());
@@ -142,7 +157,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_string() {
+    @Test
+    public void log_with_format_string() {
         final String message = "Test message %s"; //$NON-NLS-1$
 
         Lumberjack.always(message, "string"); //$NON-NLS-1$
@@ -154,7 +170,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_format_throwable() {
+    @Test
+    public void log_with_format_throwable() {
         final String message = "Test message %s"; //$NON-NLS-1$
         final Exception e = new RuntimeException();
 
@@ -167,7 +184,8 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testLog_with_throwable() {
+    @Test
+    public void log_with_throwable() {
         final String message = "Test message"; //$NON-NLS-1$
         final Exception e = new RuntimeException();
 
@@ -180,10 +198,11 @@ public final class LumberjackTest extends AndroidTestCase {
     }
 
     @SmallTest
-    public static void testFormatMessage_array() {
+    @Test
+    public void formatMessage_array() {
         final String expected = "foo [bar, baz]";
 
-        final String actual = Lumberjack.formatMessage("%s %s", "foo", new String[] {"bar, baz"});
+        final String actual = Lumberjack.formatMessage("%s %s", "foo", new String[]{"bar, baz"});
 
         assertEquals(expected, actual);
     }

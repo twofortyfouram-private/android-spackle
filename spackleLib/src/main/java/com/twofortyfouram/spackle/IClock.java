@@ -16,22 +16,21 @@
 
 package com.twofortyfouram.spackle;
 
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
+/**
+ * Generic clock interface.  This adds a layer of indirection to shield the app implementation
+ * from directly depending on system clock facilities, making automated tests easier.
+ * Clients should declare a dependency on this interface, while being given the implementation
+ * {@link ClockImpl} at runtime.
+ */
+public interface IClock {
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+    /**
+     * @return The current wall time in epoch milliseconds.
+     */
+    long getWallTimeMillis();
 
-import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-@RunWith(AndroidJUnit4.class)
-public final class AndroidSdkVersionTest {
-
-    @Test
-    @SmallTest
-    public void nonInstantiable() {
-        assertThat(AndroidSdkVersion.class, notInstantiable());
-    }
-
+    /**
+     * @return The current real time in milliseconds.
+     */
+    long getRealTimeMillis();
 }

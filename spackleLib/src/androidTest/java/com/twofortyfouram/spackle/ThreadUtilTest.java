@@ -1,16 +1,17 @@
 /*
- * android-bootstrap-core-lib https://github.com/twofortyfouram/android-bootstrap-core
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
@@ -19,32 +20,37 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.test.suitebuilder.annotation.MediumTest;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.MediumTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 import android.text.format.DateUtils;
 
-import com.twofortyfouram.spackle.ThreadUtil;
 import com.twofortyfouram.spackle.ThreadUtil.ThreadPriority;
-import com.twofortyfouram.test.assertion.MoarAsserts;
 
 import junit.framework.TestCase;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Tests {@link ThreadUtil}.
- */
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@RunWith(AndroidJUnit4.class)
 public final class ThreadUtilTest extends TestCase {
 
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(ThreadUtil.class);
+    @Test
+    public void nonInstantiable() {
+        assertThat(ThreadUtil.class, notInstantiable());
     }
 
     @SmallTest
-    public void testIsMainThread_not_on_main() throws InterruptedException {
+    @Test
+    public void isMainThread_not_on_main() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
 
         HandlerThread thread = null;
@@ -70,7 +76,8 @@ public final class ThreadUtilTest extends TestCase {
     }
 
     @SmallTest
-    public static void testIsMainThread_on_main() throws InterruptedException {
+    @Test
+    public void isMainThread_on_main() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -88,7 +95,8 @@ public final class ThreadUtilTest extends TestCase {
     }
 
     @MediumTest
-    public void testGetHandlerThread() {
+    @Test
+    public void getHandlerThread() {
 
         for (final ThreadPriority priority : ThreadPriority.values()) {
             final String threadName = String
@@ -125,7 +133,8 @@ public final class ThreadUtilTest extends TestCase {
     }
 
     @SmallTest
-    public void testGetHandlerThread_new_instance() {
+    @Test
+    public void getHandlerThread_new_instance() {
         final String threadName = getName();
 
         HandlerThread thread1 = null;
@@ -147,22 +156,14 @@ public final class ThreadUtilTest extends TestCase {
     }
 
     @SmallTest
-    public static void testGetHandlerThread_bad_parameter_empty_name() {
-        try {
-            ThreadUtil.newHandlerThread("", ThreadPriority.DEFAULT); //$NON-NLS-1$
-            fail();
-        } catch (final AssertionError e) {
-            // expected exception
-        }
+    @Test(expected = AssertionError.class)
+    public void getHandlerThread_bad_parameter_empty_name() {
+        ThreadUtil.newHandlerThread("", ThreadPriority.DEFAULT); //$NON-NLS-1$
     }
 
     @SmallTest
-    public static void testGetHandlerThread_bad_parameter_null_name() {
-        try {
-            ThreadUtil.newHandlerThread(null, ThreadPriority.DEFAULT);
-            fail();
-        } catch (final AssertionError e) {
-            // expected exception
-        }
+    @Test(expected = AssertionError.class)
+    public void getHandlerThread_bad_parameter_null_name() {
+        ThreadUtil.newHandlerThread(null, ThreadPriority.DEFAULT);
     }
 }

@@ -1,251 +1,272 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle.power;
 
 import android.Manifest;
 import android.support.annotation.RequiresPermission;
-import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
-/**
- * Tests the basics of the {@code PartialWakeLock}.
- */
-public final class PartialWakeLockTest extends AndroidTestCase {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static android.support.test.InstrumentationRegistry.getContext;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
+@RunWith(AndroidJUnit4.class)
+public final class PartialWakeLockTest {
 
     @SmallTest
-    public void testConstructor_not_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), false);
+    @Test
+    public void constructor_not_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), "test_lock",
+                false);
 
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
-    public void testConstructor_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), true);
+    @Test
+    public void constructor_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", true);
 
-        assertFalse(manager.isHeld());
-        assertEquals(0, manager.getReferenceCount());
+        assertThat(manager.isHeld(), is(false));
+        assertThat(manager.getReferenceCount(), is(0));
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
-    public void testAcquire_single_not_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), false);
+    public void acquire_single_not_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", false);
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
-    public void testAcquire_single_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), true);
+    public void acquire_single_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", true);
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
-    public void testAcquire_multiple_not_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), false);
+    public void acquire_multiple_not_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", false);
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
-    public void testAcquire_multiple_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), true);
+    public void acquire_multiple_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", true);
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.acquireLock();
-        assertEquals(2, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(2));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.acquireLock();
-        assertEquals(2, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(2));
+        assertThat(manager.isHeld(), is(true));
 
         manager.acquireLock();
-        assertEquals(3, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(3));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(2, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(2));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
 
         manager.acquireLock();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
-    public void testUnderlock_not_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), false);
+    @Test(expected = IllegalStateException.class)
+    public void underlock_not_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", false);
 
-        try {
-            manager.releaseLock();
-            fail();
-        } catch (final IllegalStateException e) {
-            // expected exception
-        }
-
+        manager.releaseLock();
     }
 
     @SmallTest
-    public void testUnderlock_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), true);
+    @Test(expected = IllegalStateException.class)
+    public void underlock_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", true);
 
-        try {
-            manager.releaseLock();
-            fail();
-        } catch (final IllegalStateException e) {
-            // expected exception
-        }
+        manager.releaseLock();
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
-    public void testReleaseIfHeld_not_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), false);
+    public void releaseIfHeld_not_reference_counted() {
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", false);
 
         manager.releaseLockIfHeld();
 
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
 
         manager.acquireLock();
         manager.releaseLockIfHeld();
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
     }
 
-
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     public void testReleaseIfHeld_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), true);
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", true);
 
         manager.releaseLockIfHeld();
 
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
 
         manager.acquireLock();
         manager.acquireLock();
-        assertEquals(2, manager.getReferenceCount());
+        assertThat(manager.getReferenceCount(), is(2));
         manager.releaseLockIfHeld();
-        assertEquals(1, manager.getReferenceCount());
+        assertThat(manager.getReferenceCount(), is(1));
         manager.releaseLockIfHeld();
-        assertEquals(0, manager.getReferenceCount());
-        assertFalse(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(0));
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     public void testAcquireIfNotHeld_not_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), false);
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", false);
 
         manager.acquireLockIfNotHeld();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
 
         manager.acquireLock();
         manager.acquireLockIfNotHeld();
-        assertEquals(1, manager.getReferenceCount());
+        assertThat(manager.getReferenceCount(), is(1));
 
         manager.releaseLock();
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
+    @Test
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     public void testAcquireIfNotHeld_reference_counted() {
-        final PartialWakeLock manager = PartialWakeLock.newInstance(getContext(), getName(), true);
+        final PartialWakeLock manager = PartialWakeLock
+                .newInstance(getContext(), "test_lock", true);
 
         manager.acquireLockIfNotHeld();
-        assertEquals(1, manager.getReferenceCount());
-        assertTrue(manager.isHeld());
+        assertThat(manager.getReferenceCount(), is(1));
+        assertThat(manager.isHeld(), is(true));
 
         manager.releaseLock();
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
 
         manager.acquireLock();
         manager.acquireLockIfNotHeld();
-        assertEquals(1, manager.getReferenceCount());
+        assertThat(manager.getReferenceCount(), is(1));
 
         manager.releaseLock();
-        assertFalse(manager.isHeld());
+        assertThat(manager.isHeld(), is(false));
     }
 
     @SmallTest
+    @Test
     public void testToString() {
-        assertNotNull(PartialWakeLock.newInstance(getContext(), getName(), false).toString());
+        assertThat(PartialWakeLock.newInstance(getContext(), "test_lock", false).toString(),
+                notNullValue());
     }
 }

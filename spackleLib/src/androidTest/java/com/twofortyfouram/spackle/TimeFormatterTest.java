@@ -16,22 +16,36 @@
 
 package com.twofortyfouram.spackle;
 
+
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static com.twofortyfouram.spackle.TimeFormatter.TimeFormat.ISO_8601;
 import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public final class AndroidSdkVersionTest {
+public final class TimeFormatterTest {
 
-    @Test
     @SmallTest
+    @Test
     public void nonInstantiable() {
-        assertThat(AndroidSdkVersion.class, notInstantiable());
+        assertThat(TimeFormatter.class, notInstantiable());
     }
 
+    @SmallTest
+    @Test
+    public void formatTimeIso8601() {
+        final long wallTimeMillis = 1485450137000L;
+
+        // Need to match on substring to avoid time zone issues with tests
+        assertThat(TimeFormatter.formatTime(ISO_8601, wallTimeMillis),
+                containsString("2017-01-26")); //$NON-NLS
+        assertThat(TimeFormatter.formatTime(ISO_8601, wallTimeMillis),
+                containsString("02:17.000")); //$NON-NLS
+    }
 }

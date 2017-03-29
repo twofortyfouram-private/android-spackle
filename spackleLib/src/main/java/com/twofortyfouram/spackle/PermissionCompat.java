@@ -1,22 +1,24 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -55,8 +57,9 @@ public final class PermissionCompat {
      * be omitted from the manifest.
      *
      * Note that on Marshmallow, this class also correctly handles checking for {@link
-     * android.Manifest.permission#WRITE_SETTINGS} and
-     * {@link android.Manifest.permission#REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}.
+     * android.Manifest.permission#WRITE_SETTINGS},
+     * {@link android.Manifest.permission#REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}, and {@link
+     * android.Manifest.permission#ACCESS_NOTIFICATION_POLICY}.
      *
      * @param context        Application context.
      * @param permissionName Name of the permission to check.
@@ -142,9 +145,10 @@ public final class PermissionCompat {
         assertNotEmpty(permissionName, "permissionName"); //$NON-NLS-1$
 
         /*
-         * WRITE_SETTINGS and REQUEST_IGNORE_BATTERY_OPTIMIZATIONS behave differently from other
-         * permissions and have to be checked in a different way.  The lack of consistency in the
-         * Android SDK is frustrating, so this implementation smooths that over.
+         * WRITE_SETTINGS, REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, and ACCESS_NOTIFICATION_POLICY
+         * behave differently from other permissions and have to be checked in a different way.  The
+         * lack of consistency in the Android SDK is frustrating, so this implementation smooths
+         * that over.
          *
          * To make unit testing easier, this class is aware of the FeatureContextWrapper
          * implementation.  If a test context, then we fall back to a different set of behaviors.
@@ -159,6 +163,13 @@ public final class PermissionCompat {
                 .equals(context.getClass().getName())) {
             if (context.getSystemService(PowerManager.class)
                     .isIgnoringBatteryOptimizations(context.getPackageName())) {
+                return true;
+            }
+        } else if (Manifest.permission.ACCESS_NOTIFICATION_POLICY
+                .equals(permissionName) && !FEATURE_CONTEXT_WRAPPER_CLASS_NAME
+                .equals(context.getClass().getName())) {
+            if (context.getSystemService(NotificationManager.class)
+                    .isNotificationPolicyAccessGranted()) {
                 return true;
             }
         } else if (PackageManager.PERMISSION_GRANTED == context

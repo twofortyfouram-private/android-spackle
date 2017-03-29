@@ -1,16 +1,17 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
@@ -26,14 +27,21 @@ import android.os.Build;
 import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.support.annotation.RequiresPermission;
-import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.MediumTest;
+import android.support.test.filters.MediumTest;
+import android.support.test.filters.Suppress;
 import android.text.format.DateUtils;
 
+import org.junit.Test;
+
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public final class AlarmManagerCompatTest extends AndroidTestCase {
+import static android.support.test.InstrumentationRegistry.getContext;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public final class AlarmManagerCompatTest {
 
     /*
      * Allows for jitter in alarm delivery, especially when running tests on the emulator.
@@ -50,15 +58,21 @@ public final class AlarmManagerCompatTest extends AndroidTestCase {
      */
     private final long LONG_ALARM_DELAY_MILLIS = Math.round(7 * DateUtils.SECOND_IN_MILLIS);
 
+    // Case 15426
     @MediumTest
+    @Test
+    @Suppress
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
-    public void testSetExactElapsedWakeup_short() {
+    public void setExactElapsedWakeup_short() {
         if (!AndroidSdkVersion.isAtLeastSdk(Build.VERSION_CODES.M)) {
             assertAlarmFiresWithin(AlarmManager.ELAPSED_REALTIME_WAKEUP, SHORT_ALARM_DELAY_MILLIS);
         }
     }
 
+    // Case 15426
     @MediumTest
+    @Test
+    @Suppress
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     public void testSetExactElapsedWakeup_long() {
         if (!AndroidSdkVersion.isAtLeastSdk(Build.VERSION_CODES.M)) {
@@ -66,7 +80,10 @@ public final class AlarmManagerCompatTest extends AndroidTestCase {
         }
     }
 
+    // Case 15426
     @MediumTest
+    @Test
+    @Suppress
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     public void testSetExactRtcWakeup_short() {
         if (!AndroidSdkVersion.isAtLeastSdk(Build.VERSION_CODES.M)) {
@@ -74,7 +91,10 @@ public final class AlarmManagerCompatTest extends AndroidTestCase {
         }
     }
 
+    // Case 15426
     @MediumTest
+    @Test
+    @Suppress
     @RequiresPermission(Manifest.permission.WAKE_LOCK)
     public void testSetExactRtcWakeup_long() {
         if (!AndroidSdkVersion.isAtLeastSdk(Build.VERSION_CODES.M)) {
@@ -87,14 +107,15 @@ public final class AlarmManagerCompatTest extends AndroidTestCase {
             @com.twofortyfouram.spackle.AlarmManagerCompat.AlarmType final int type,
             final long delayMillis) {
         final HandlerThread
-                thread = ThreadUtil.newHandlerThread(getName(), ThreadUtil.ThreadPriority.DEFAULT);
+                thread = ThreadUtil.newHandlerThread("alarm_test", ThreadUtil.ThreadPriority
+                .DEFAULT);
 
         final long wallTimeMillis = System.currentTimeMillis();
         final long elapsedRealtimeMillis = SystemClock.elapsedRealtime();
 
         try {
             final String intentAction = "com.twofortyfouram.spackle.test."
-                    + getName(); //$NON-NLS-1$
+                    + UUID.randomUUID(); //$NON-NLS-1$
             final CountDownLatch latch = new CountDownLatch(1);
             final BroadcastReceiver receiver = new BroadcastReceiver() {
 

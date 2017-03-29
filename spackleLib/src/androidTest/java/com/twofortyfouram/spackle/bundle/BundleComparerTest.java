@@ -1,16 +1,17 @@
 /*
- * android-bootstrap-core-lib https://github.com/twofortyfouram/android-bootstrap-core
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle.bundle;
@@ -18,25 +19,31 @@ package com.twofortyfouram.spackle.bundle;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
-import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
-import com.twofortyfouram.test.assertion.MoarAsserts;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public final class BundleComparerTest extends AndroidTestCase {
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+public final class BundleComparerTest {
 
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(BundleComparer.class);
+    @Test
+    public void nonInstantiable() {
+        assertThat(BundleComparer.class, notInstantiable());
     }
 
-    /**
-     * Tests comparing boolean types
-     */
     @SmallTest
+    @Test
     public void testEmpty() {
         final Bundle bundle1 = new Bundle();
         final Bundle bundle2 = new Bundle();
@@ -48,6 +55,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing null types
      */
     @SmallTest
+    @Test
     public void testNull() {
         /*
          * Test null parameters
@@ -126,6 +134,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testBoolean() {
         /*
          * Test equal keys and values
@@ -200,6 +209,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing boolean[] types
      */
     @SmallTest
+    @Test
     public void testBooleanArray() {
         /*
          * Test equal empty arrays
@@ -274,6 +284,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing boolean types
      */
     @SmallTest
+    @Test
     public void testBundle() {
         /*
          * Test equal empty bundles
@@ -293,6 +304,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing boolean types
      */
     @SmallTest
+    @Test
     public void testByte() {
         /*
          * Test equal keys and values
@@ -355,6 +367,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testByteArray() {
         /*
          * Test equal empty arrays
@@ -429,6 +442,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing boolean types
      */
     @SmallTest
+    @Test
     public void testChar() {
         /*
          * Test equal keys and values
@@ -491,6 +505,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing char[] types
      */
     @SmallTest
+    @Test
     public void testCharArray() {
         /*
          * Test equal empty arrays
@@ -563,6 +578,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing Charsequence types
      */
     @SmallTest
+    @Test
     public void testCharsequence() {
         /*
          * Test equal keys and values
@@ -622,6 +638,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing double types
      */
     @SmallTest
+    @Test
     public void testDouble() {
         /*
          * Test equal keys and values
@@ -681,6 +698,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testDoubleArray() {
         /*
          * Test equal empty arrays
@@ -754,6 +772,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing float types
      */
     @SmallTest
+    @Test
     public void testFloat() {
         /*
          * Test equal keys and values
@@ -817,6 +836,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testFloatArray() {
         /*
          * Test equal empty arrays
@@ -890,6 +910,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing float types
      */
     @SmallTest
+    @Test
     public void testInt() {
         /*
          * Test equal keys and values
@@ -965,6 +986,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testIntArray() {
         /*
          * Test equal empty arrays
@@ -1038,6 +1060,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing ArrayList<Integer> types
      */
     @SmallTest
+    @Test
     public void testIntegerArrayList() {
         /*
          * Test equal empty arrays
@@ -1113,6 +1136,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing long types
      */
     @SmallTest
+    @Test
     public void testLong() {
         /*
          * Test equal keys and values
@@ -1176,6 +1200,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testLongArray() {
         /*
          * Test equal empty arrays
@@ -1250,6 +1275,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing long types
      */
     @SmallTest
+    @Test
     public void testParcelable() {
         /*
          * Test equal keys and values
@@ -1331,6 +1357,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing short types
      */
     @SmallTest
+    @Test
     public void testShort() {
         /*
          * Test equal keys and values
@@ -1394,6 +1421,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      */
     @SuppressWarnings("boxing")
     @SmallTest
+    @Test
     public void testShortArray() {
         /*
          * Test equal empty arrays
@@ -1475,6 +1503,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing Serializable types
      */
     @SmallTest
+    @Test
     public void testSerializable() {
         /*
          * Test equal keys and values
@@ -1599,6 +1628,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing float types
      */
     @SmallTest
+    @Test
     public void testString() {
         /*
          * Test equal keys and values
@@ -1670,6 +1700,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing String[] types
      */
     @SmallTest
+    @Test
     public void testStringArray() {
         /*
          * Test equal empty arrays
@@ -1750,6 +1781,7 @@ public final class BundleComparerTest extends AndroidTestCase {
      * Tests comparing ArrayList<Integer> types
      */
     @SmallTest
+    @Test
     public void testStringArrayList() {
         /*
          * Test equal empty arrays

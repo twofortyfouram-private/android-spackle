@@ -1,56 +1,72 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
 
-import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.twofortyfouram.spackle.test.R;
-import com.twofortyfouram.test.assertion.MoarAsserts;
 
-/**
- * Tests {@link ResourceUtil}.
- */
-public final class ResourceUtilTest extends AndroidTestCase {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static android.support.test.InstrumentationRegistry.getContext;
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+@RunWith(AndroidJUnit4.class)
+public final class ResourceUtilTest {
 
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(ResourceUtil.class);
+    @Test
+    public void nonInstantiable() {
+        assertThat(ResourceUtil.class, notInstantiable());
     }
 
     @SmallTest
-    public void testGetPositionForIdInArray() {
-        assertEquals(0, ResourceUtil.getPositionForIdInArray(getContext(), R.array.com_twofortyfouram_spackle_test_array,
-                R.string.com_twofortyfouram_spackle_test_string_key_1));
+    @Test
+    public void getPositionForIdInArray() {
+        assertThat(ResourceUtil.getPositionForIdInArray(getContext(), R.array
+                        .com_twofortyfouram_spackle_test_array,
+                R.string.com_twofortyfouram_spackle_test_string_key_1), is(0));
 
-        assertEquals(1, ResourceUtil.getPositionForIdInArray(getContext(), R.array.com_twofortyfouram_spackle_test_array,
-                R.string.com_twofortyfouram_spackle_test_string_key_2));
-        assertEquals(2, ResourceUtil.getPositionForIdInArray(getContext(), R.array.com_twofortyfouram_spackle_test_array,
-                R.string.com_twofortyfouram_spackle_test_string_key_3));
+        assertThat(ResourceUtil.getPositionForIdInArray(getContext(), R.array
+                        .com_twofortyfouram_spackle_test_array,
+                R.string.com_twofortyfouram_spackle_test_string_key_2), is(1));
+
+        assertThat(ResourceUtil.getPositionForIdInArray(getContext(), R.array
+                        .com_twofortyfouram_spackle_test_array,
+                R.string.com_twofortyfouram_spackle_test_string_key_3), is(2));
     }
 
     @SmallTest
-    public void testResourceIdForPositionInArray() {
-        assertEquals(R.string.com_twofortyfouram_spackle_test_string_key_1,
-                ResourceUtil.getResourceIdForPositionInArray(getContext(), R.array.com_twofortyfouram_spackle_test_array, 0));
+    @Test
+    public void resourceIdForPositionInArray() {
+        assertThat(ResourceUtil.getResourceIdForPositionInArray(getContext(), R.array
+                        .com_twofortyfouram_spackle_test_array, 0),
+                is(R.string.com_twofortyfouram_spackle_test_string_key_1));
 
-        assertEquals(R.string.com_twofortyfouram_spackle_test_string_key_2,
-                ResourceUtil.getResourceIdForPositionInArray(getContext(), R.array.com_twofortyfouram_spackle_test_array, 1));
+        assertThat(ResourceUtil.getResourceIdForPositionInArray(getContext(),
+                R.array.com_twofortyfouram_spackle_test_array, 1),
+                is(R.string.com_twofortyfouram_spackle_test_string_key_2));
 
-        assertEquals(R.string.com_twofortyfouram_spackle_test_string_key_3,
-                ResourceUtil.getResourceIdForPositionInArray(getContext(), R.array.com_twofortyfouram_spackle_test_array, 2));
+        assertThat(ResourceUtil.getResourceIdForPositionInArray(getContext(),
+                R.array.com_twofortyfouram_spackle_test_array, 2),
+                is(R.string.com_twofortyfouram_spackle_test_string_key_3));
     }
 }

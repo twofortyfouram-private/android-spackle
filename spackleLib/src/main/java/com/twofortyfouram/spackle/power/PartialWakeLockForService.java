@@ -1,16 +1,17 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle.power;
@@ -22,9 +23,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
-
-import com.twofortyfouram.annotation.VisibleForTesting;
-import com.twofortyfouram.annotation.VisibleForTesting.Visibility;
+import android.support.annotation.VisibleForTesting;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -47,8 +46,7 @@ import static com.twofortyfouram.assertion.Assertions.assertNotNull;
  * </ol>
  * <p>
  * This class handles scenarios where {@link #beforeStartingService(Context)} isn't always called
- * (for example, the Service is restarted due to {@link android.app.Service#START_STICKY} or
- * similar).
+ * (for example, the Service is restarted due to {@link android.app.Service#START_STICKY}).
  * <p>
  * Clients of this class must have the permission {@link android.Manifest.permission#WAKE_LOCK}.
  */
@@ -93,7 +91,7 @@ public final class PartialWakeLockForService {
      * context.
      */
     @NonNull
-    @VisibleForTesting(Visibility.PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     /* package */PartialWakeLock getWakeLock(@NonNull final Context context) {
         assertNotNull(context, "context"); //$NON-NLS-1$
 
@@ -139,7 +137,7 @@ public final class PartialWakeLockForService {
          * sticky service, so reacquire if not held. There is a slight race condition with this
          * behavior, but the risk is fairly small. The race condition could occur if the Service
          * receives two start requests at the same time: once is by the application itself, and
-         * another is Android's restart of the stick service. If the app itself starts the service
+         * another is Android's restart of the sticky service. If the app itself starts the service
          * first and calls beforeStartingService(Context), then when Android restarts the service
          * this method may already see the lock is held and won't acquire another one. If that
          * happens, then one of the two start requests to the service will not actually have a

@@ -1,68 +1,79 @@
 /*
- * android-spackle-lib https://github.com/twofortyfouram/android-spackle
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.test.AndroidTestCase;
-import android.test.IsolatedContext;
-import android.test.RenamingDelegatingContext;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
-import com.twofortyfouram.test.assertion.MoarAsserts;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import static android.support.test.InstrumentationRegistry.getContext;
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
 
-public final class ContextUtilTest extends AndroidTestCase {
+@RunWith(AndroidJUnit4.class)
+public final class ContextUtilTest {
 
+    @Test
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(ContextUtil.class);
+    public void nonInstantiable() {
+        assertThat(ContextUtil.class, notInstantiable());
     }
 
+    @Test
     @SmallTest
-    public void testCleanContext() {
+    public void cleanContext() {
         final Context cleanableContext = new CleanableContext(getContext());
 
-        assertNotSame(cleanableContext, ContextUtil.cleanContext(cleanableContext));
-        assertSame(cleanableContext.getApplicationContext(),
-                ContextUtil.cleanContext(cleanableContext));
+        assertThat(cleanableContext, not(sameInstance(ContextUtil.cleanContext
+                (cleanableContext))));
+        assertThat(cleanableContext.getApplicationContext(),
+                sameInstance(ContextUtil.cleanContext(cleanableContext)));
     }
 
+    @Test(expected = AssertionError.class)
     @SmallTest
-    public static void testCleanContext_null() {
-        try {
-            ContextUtil.cleanContext(null);
-            fail();
-        } catch (final AssertionError e) {
-            // expected exception
-        }
+    public void cleanContext_null() {
+        ContextUtil.cleanContext(null);
     }
 
+    @Test
     @SmallTest
-    public static void testCleanContext_isolated_context() {
-        final Context isolatedContext = new IsolatedContext(null, null);
+    @SuppressWarnings("deprecation")
+    public void cleanContext_isolated_context() {
+        final Context isolatedContext = new android.test.IsolatedContext(null, null);
 
-        assertSame(isolatedContext, ContextUtil.cleanContext(isolatedContext));
+        assertThat(isolatedContext, sameInstance(ContextUtil.cleanContext(isolatedContext)));
     }
 
+    @Test
     @SmallTest
-    public static void testCleanContext_renaming_delegating_context() {
-        final Context renamingDelegatingContext = new RenamingDelegatingContext(null, null);
+    @SuppressWarnings("deprecation")
+    public void cleanContext_renaming_delegating_context() {
+        final Context renamingDelegatingContext = new android.test.RenamingDelegatingContext(null,
+                null);
 
-        assertSame(renamingDelegatingContext, ContextUtil.cleanContext(renamingDelegatingContext));
+        assertThat(renamingDelegatingContext, sameInstance(ContextUtil.cleanContext
+                (renamingDelegatingContext)));
     }
 
     private static final class CleanableContext extends ContextWrapper {

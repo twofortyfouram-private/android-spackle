@@ -1,59 +1,70 @@
 /*
- * android-bootstrap-core-lib https://github.com/twofortyfouram/android-bootstrap-core
- * Copyright 2014 two forty four a.m. LLC
+ * android-spackle https://github.com/twofortyfouram/android-spackle
+ * Copyright (C) 2009–2017 two forty four a.m. LLC
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.twofortyfouram.spackle.bundle;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.test.InstrumentationTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.twofortyfouram.assertion.BundleAssertions;
-import com.twofortyfouram.test.assertion.MoarAsserts;
 
-/**
- * Tests {@link BundleScrubber}.
- */
-public final class BundleScrubberTest extends InstrumentationTestCase {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static com.twofortyfouram.test.matcher.ClassNotInstantiableMatcher.notInstantiable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertFalse;
+
+@RunWith(AndroidJUnit4.class)
+public final class BundleScrubberTest {
 
     @SmallTest
-    public static void testNonInstantiable() {
-        MoarAsserts.assertNoninstantiable(BundleScrubber.class);
+    @Test
+    public void nonInstantiable() {
+        assertThat(BundleScrubber.class, notInstantiable());
     }
 
     @SmallTest
-    public static void testScrub_intent_null() {
+    @Test
+    public void scrub_intent_null() {
         assertFalse(BundleScrubber.scrub((Intent) null));
     }
 
     @SmallTest
-    public static void testScrub_intent_empty() {
+    @Test
+    public void scrub_intent_empty() {
         final Intent intent = new Intent();
-        assertNull(intent.getExtras());
+        assertThat(intent.getExtras(), nullValue());
 
-        assertFalse(BundleScrubber.scrub(intent));
+        assertThat(BundleScrubber.scrub(intent), is(false));
 
-        assertNull(intent.getExtras());
+        assertThat(intent.getExtras(), nullValue());
     }
 
     @SmallTest
-    public static void testScrub_intent_non_empty() {
+    @Test
+    public void scrub_intent_non_empty() {
         final Intent intent = new Intent()
                 .putExtra("test_key", "test_value"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        assertFalse(BundleScrubber.scrub(intent));
+        assertThat(BundleScrubber.scrub(intent), is(false));
 
         BundleAssertions.assertKeyCount(intent.getExtras(), 1);
         BundleAssertions.assertHasString(intent.getExtras(), "test_key",
@@ -61,25 +72,28 @@ public final class BundleScrubberTest extends InstrumentationTestCase {
     }
 
     @SmallTest
-    public static void testScrub_bundle_null() {
+    @Test
+    public void scrub_bundle_null() {
         assertFalse(BundleScrubber.scrub((Bundle) null));
     }
 
     @SmallTest
-    public static void testScrub_bundle_empty() {
+    @Test
+    public void scrub_bundle_empty() {
         final Bundle bundle = new Bundle();
 
-        assertFalse(BundleScrubber.scrub(bundle));
+        assertThat(BundleScrubber.scrub(bundle), is(false));
 
         BundleAssertions.assertKeyCount(bundle, 0);
     }
 
     @SmallTest
-    public static void testScrub_bundle_non_empty() {
+    @Test
+    public void scrub_bundle_non_empty() {
         final Bundle bundle = new Bundle();
         bundle.putString("test_key", "test_value"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        assertFalse(BundleScrubber.scrub(bundle));
+        assertThat(BundleScrubber.scrub(bundle), is(false));
 
         BundleAssertions.assertKeyCount(bundle, 1);
         BundleAssertions
