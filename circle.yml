@@ -40,7 +40,7 @@ test:
     - PATH="/home/ubuntu/mybin/gcloud/bin:${PATH}" && gcloud beta test android run tools/gcloud.yml:spackleLib 2>&1 | tee build/gcloud_logs/spackleLib-log.txt
 
     # Pull JUnit test results and JaCoCo coverage.  They'll be placed in the directories that a standard `connectedCheck` would put them in.
-    - PATH="/home/ubuntu/mybin/gcloud/bin:${PATH}" && ./tools/ci/google-cloud-test-lab-fetch-results.sh spackleLib build/gcloud_logs "Nexus4-19-en-portrait" "NexusLowRes-25-en-portrait"
+    - PATH="/home/ubuntu/mybin/gcloud/bin:${PATH}" && ./tools/ci/google-cloud-test-lab-fetch-results.sh spackleLib build/gcloud_logs "Nexus4-19-en-portrait" "NexusLowRes-26-en-portrait"
 
     # Convert the coverage.ec files into readable reports
     - ./gradlew createDebugCoverageReport -x connectedDebugAndroidTest
